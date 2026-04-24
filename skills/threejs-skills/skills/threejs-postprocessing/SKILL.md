@@ -1,6 +1,6 @@
 ---
 name: threejs-postprocessing
-description: Three.js post-processing - EffectComposer, bloom, DOF, screen effects. Use when adding visual effects, color grading, blur, glow, or creating custom screen-space shaders.
+description: Three.js 后处理：EffectComposer、泛光、景深与屏幕特效。适用于添加视觉特效、颜色校正、模糊、发光效果或创建自定义屏幕后处理着色器。
 ---
 
 # Three.js Post-Processing

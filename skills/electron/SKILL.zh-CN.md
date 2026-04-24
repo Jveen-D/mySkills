@@ -9,68 +9,68 @@ description: |
   DO NOT USE FOR: Tauri 应用 - 请改用 `tauri` skill
 allowed-tools: Read, Grep, Glob, Write, Edit
 ---
-# Electron Core Knowledge
+# Electron 核心知识
 
-> **Deep Knowledge**: Use `mcp__documentation__fetch_docs` with technology: `electron` for comprehensive API documentation.
+> **深入资料**：如需完整 API 文档，可使用 `mcp__documentation__fetch_docs`，并指定 technology 为 `electron`。
 
-## When NOT to Use This Skill
+## 何时不应使用本 Skill
 
-- **Tauri applications** - Use the `tauri` skill for Rust-based desktop apps
-- **Web applications only** - Electron is for desktop apps, not web deployment
-- **Mobile applications** - Electron doesn't support iOS/Android natively
-- **CLI tools** - Use Node.js directly for command-line applications
+- **Tauri 应用** - Rust 桌面应用应使用 `tauri` skill
+- **纯 Web 应用** - Electron 面向桌面应用，而不是 Web 部署
+- **移动应用** - Electron 不原生支持 iOS/Android
+- **CLI 工具** - 命令行程序请直接使用 Node.js
 
 ---
 
-## Architecture
+## 架构
 
-### Process Model
+### 进程模型
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      Main Process                           │
-│  - Node.js Runtime (full access)                            │
-│  - Electron APIs (app, BrowserWindow, ipcMain, dialog)      │
+│                         主进程                              │
+│  - Node.js 运行时（完整访问权限）                           │
+│  - Electron API（app、BrowserWindow、ipcMain、dialog）      │
 └──────────────────────────┬──────────────────────────────────┘
-                           │ IPC Channel
+                           │ IPC 通道
 ┌──────────────────────────▼──────────────────────────────────┐
-│                    Preload Script                           │
-│  - Executes before renderer                                 │
-│  - Uses contextBridge to expose safe APIs                   │
+│                        Preload 脚本                         │
+│  - 在渲染进程之前执行                                        │
+│  - 通过 contextBridge 暴露安全 API                          │
 └──────────────────────────┬──────────────────────────────────┘
                            │ contextBridge.exposeInMainWorld()
 ┌──────────────────────────▼──────────────────────────────────┐
-│                   Renderer Process                          │
-│  - Chromium Runtime (standard Web APIs)                     │
-│  - No direct Node.js access (by default)                    │
-│  - window.electronAPI (exposed via preload)                 │
+│                        渲染进程                              │
+│  - Chromium 运行时（标准 Web API）                          │
+│  - 默认不直接访问 Node.js                                   │
+│  - 通过 preload 暴露的 window.electronAPI                  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Project Structure
+### 项目结构
 
 ```
 electron-app/
 ├── src/
-│   ├── main/                    # Main process
-│   │   ├── index.ts             # Entry point
-│   │   ├── window.ts            # Window management
-│   │   ├── ipc/                 # IPC handlers
-│   │   └── updater.ts           # Auto-updates
+│   ├── main/                    # 主进程
+│   │   ├── index.ts             # 入口文件
+│   │   ├── window.ts            # 窗口管理
+│   │   ├── ipc/                 # IPC 处理器
+│   │   └── updater.ts           # 自动更新
 │   ├── preload/
-│   │   ├── index.ts             # Main preload
-│   │   └── types.d.ts           # Type declarations
-│   └── renderer/                # Frontend app
-├── resources/                   # App icons
-├── electron-builder.yml         # Packaging config
+│   │   ├── index.ts             # 主 preload
+│   │   └── types.d.ts           # 类型声明
+│   └── renderer/                # 前端应用
+├── resources/                   # 应用图标
+├── electron-builder.yml         # 打包配置
 └── package.json
 ```
 
 ---
 
-## IPC Communication Essentials
+## IPC 通信要点
 
-### Preload Script
+### Preload 脚本
 
 ```typescript
 // src/preload/index.ts
@@ -84,7 +84,7 @@ const electronAPI = {
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI);
 
-// Event subscriptions
+// 事件订阅
 contextBridge.exposeInMainWorld('electronEvents', {
   onMenuAction: (callback: (action: string) => void) => {
     const handler = (_e: any, action: string) => callback(action);
@@ -94,7 +94,7 @@ contextBridge.exposeInMainWorld('electronEvents', {
 });
 ```
 
-### Main Process Handlers
+### 主进程处理器
 
 ```typescript
 // src/main/ipc/index.ts
@@ -112,26 +112,26 @@ export function registerIpcHandlers() {
 }
 ```
 
-> **Full Reference**: See [ipc-security.md](ipc-security.md) for complete IPC patterns and type-safe setup.
+> **完整参考**：详见 [ipc-security.md](ipc-security.md)，其中包含完整 IPC 模式与类型安全方案。
 
 ---
 
-## Security Essentials
+## 安全基础
 
-### Secure BrowserWindow
+### 安全的 BrowserWindow 配置
 
 ```typescript
 const win = new BrowserWindow({
   webPreferences: {
     preload: path.join(__dirname, 'preload.js'),
-    contextIsolation: true,      // REQUIRED
-    nodeIntegration: false,      // REQUIRED
-    sandbox: true,               // Recommended
-    webSecurity: true,           // NEVER disable
+    contextIsolation: true,      // 必须开启
+    nodeIntegration: false,      // 必须关闭
+    sandbox: true,               // 推荐开启
+    webSecurity: true,           // 永远不要关闭
   },
 });
 
-// Content Security Policy
+// 内容安全策略（CSP）
 win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
   callback({
     responseHeaders: {
@@ -146,22 +146,22 @@ win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
 });
 ```
 
-### Security Checklist
+### 安全检查清单
 
-- [ ] `contextIsolation: true` - Isolate preload from renderer
-- [ ] `nodeIntegration: false` - No Node.js APIs in renderer
-- [ ] `sandbox: true` - OS-level process sandboxing
-- [ ] Never expose raw `ipcRenderer` to renderer
-- [ ] Validate ALL inputs in `ipcMain.handle()` handlers
-- [ ] Use `safeStorage` API for credentials
+- [ ] `contextIsolation: true` - 将 preload 与渲染进程隔离
+- [ ] `nodeIntegration: false` - 渲染进程不暴露 Node.js API
+- [ ] `sandbox: true` - 启用操作系统级进程沙箱
+- [ ] 绝不向渲染进程暴露原始 `ipcRenderer`
+- [ ] 在 `ipcMain.handle()` 中校验**所有输入**
+- [ ] 凭据使用 `safeStorage` API 保存
 
-> **Full Reference**: See [ipc-security.md](ipc-security.md) for complete security configuration.
+> **完整参考**：详见 [ipc-security.md](ipc-security.md)，其中包含完整安全配置。
 
 ---
 
-## Packaging Quick Start
+## 打包快速开始
 
-### Electron Builder (electron-builder.yml)
+### Electron Builder（`electron-builder.yml`）
 
 ```yaml
 appId: com.company.app
@@ -183,7 +183,7 @@ publish:
   repo: app
 ```
 
-### Auto-Updates
+### 自动更新
 
 ```typescript
 import { autoUpdater } from 'electron-updater';
@@ -201,17 +201,17 @@ autoUpdater.on('update-downloaded', () => {
   autoUpdater.quitAndInstall();
 });
 
-// Check on startup
+// 启动时检查更新
 autoUpdater.checkForUpdates();
 ```
 
-> **Full Reference**: See [packaging.md](packaging.md) for complete Forge and Builder configuration.
+> **完整参考**：详见 [packaging.md](packaging.md)，其中包含完整 Forge 与 Builder 配置。
 
 ---
 
-## Backend Integration
+## 后端集成
 
-### Local SQLite Database
+### 本地 SQLite 数据库
 
 ```typescript
 import Database from 'better-sqlite3';
@@ -226,7 +226,7 @@ export const itemsRepo = {
 };
 ```
 
-### Secure Token Storage
+### 安全的 Token 存储
 
 ```typescript
 import { safeStorage } from 'electron';
@@ -251,76 +251,76 @@ export const tokenStore = {
 };
 ```
 
-> **Full Reference**: See [backend.md](backend.md) for embedded servers, offline-first patterns, and WebSocket integration.
+> **完整参考**：详见 [backend.md](backend.md)，其中包含嵌入式服务、离线优先模式和 WebSocket 集成。
 
 ---
 
-## Production Checklist
+## 生产检查清单
 
-### Build & Packaging
-- [ ] Code signing configured for all platforms
-- [ ] macOS notarization enabled
-- [ ] ASAR packaging enabled
+### 构建与打包
+- [ ] 所有平台都已配置代码签名
+- [ ] 已启用 macOS notarization
+- [ ] 已启用 ASAR 打包
 
-### Security
-- [ ] All security defaults enforced
-- [ ] CSP headers configured
-- [ ] IPC handlers validate all inputs
-- [ ] safeStorage used for credentials
+### 安全
+- [ ] 已强制启用所有安全默认项
+- [ ] 已配置 CSP 头
+- [ ] IPC 处理器会校验所有输入
+- [ ] 凭据使用 `safeStorage`
 
-### Performance
-- [ ] Startup time < 3 seconds
-- [ ] Memory usage baseline established
+### 性能
+- [ ] 启动时间 < 3 秒
+- [ ] 已建立内存占用基线
 
-### Monitoring Metrics
+### 监控指标
 
-| Metric | Warning | Critical |
-|--------|---------|----------|
-| Startup time | > 3s | > 5s |
-| Memory usage | > 300MB | > 500MB |
-| Crash rate | > 0.1% | > 1% |
-
----
-
-## Anti-Patterns
-
-| Anti-Pattern | Problem | Solution |
-|--------------|---------|----------|
-| `nodeIntegration: true` | Major security risk | Use `contextIsolation: true` + preload |
-| `webSecurity: false` | Enables XSS | Never disable |
-| Exposing raw `ipcRenderer` | Security hole | Use `contextBridge.exposeInMainWorld()` |
-| No input validation | Injection attacks | Validate in `ipcMain.handle()` |
-| Hardcoded credentials | Exposed in ASAR | Use `safeStorage` API |
-| `ipcRenderer.sendSync` | Blocks renderer | Use async `invoke()` |
+| 指标 | 警告 | 严重 |
+|------|------|------|
+| 启动时间 | > 3s | > 5s |
+| 内存占用 | > 300MB | > 500MB |
+| 崩溃率 | > 0.1% | > 1% |
 
 ---
 
-## Quick Troubleshooting
+## 反模式
 
-| Issue | Solution |
-|-------|----------|
-| `require is not defined` | Use preload with `contextBridge` |
-| IPC returns `undefined` | Verify channel names match |
-| White screen on startup | Check DevTools console |
-| Auto-updater not checking | Ensure app is code-signed |
-| High memory usage | Check for unbounded caches |
-| App won't start on macOS | Complete notarization |
-
----
-
-## Reference Files
-
-| File | Content |
-|------|---------|
-| [ipc-security.md](ipc-security.md) | Type-safe IPC, Security configuration |
-| [packaging.md](packaging.md) | Electron Forge, Builder, Auto-updates |
-| [backend.md](backend.md) | SQLite, Express, Offline-first, WebSocket |
+| 反模式 | 问题 | 解决方案 |
+|--------|------|----------|
+| `nodeIntegration: true` | 严重安全风险 | 使用 `contextIsolation: true` + preload |
+| `webSecurity: false` | 会导致 XSS 风险 | 绝不要关闭 |
+| 暴露原始 `ipcRenderer` | 安全漏洞 | 使用 `contextBridge.exposeInMainWorld()` |
+| 不做输入校验 | 易受注入攻击 | 在 `ipcMain.handle()` 中校验 |
+| 硬编码凭据 | 会暴露在 ASAR 中 | 使用 `safeStorage` API |
+| `ipcRenderer.sendSync` | 阻塞渲染进程 | 使用异步 `invoke()` |
 
 ---
 
-## External Documentation
+## 快速排障
 
-- [Electron Official Docs](https://www.electronjs.org/docs/latest/)
+| 问题 | 解决方法 |
+|------|----------|
+| `require is not defined` | 使用 preload + `contextBridge` |
+| IPC 返回 `undefined` | 检查通道名是否一致 |
+| 启动白屏 | 查看 DevTools 控制台 |
+| 自动更新不检查 | 确认应用已代码签名 |
+| 内存占用过高 | 检查是否存在无上限缓存 |
+| macOS 无法启动 | 完成 notarization |
+
+---
+
+## 参考文件
+
+| 文件 | 内容 |
+|------|------|
+| [ipc-security.md](ipc-security.md) | 类型安全 IPC、安全配置 |
+| [packaging.md](packaging.md) | Electron Forge、Builder、自动更新 |
+| [backend.md](backend.md) | SQLite、Express、离线优先、WebSocket |
+
+---
+
+## 外部文档
+
+- [Electron 官方文档](https://www.electronjs.org/docs/latest/)
 - [Electron Security](https://www.electronjs.org/docs/latest/tutorial/security)
 - [Electron Forge](https://www.electronforge.io/)
 - [electron-builder](https://www.electron.build/)
