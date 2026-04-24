@@ -1,6 +1,6 @@
 ---
 name: translate-skill-descriptions
-description: 用于批量修改当前工作区内所有 `SKILL.md` 的 `description` 为中文，并在同目录创建 `SKILL.zh-CN.md` 中文副本。适用于维护技能仓库、做本地化、统一 skill 元数据展示语言，或批量建立中文说明文档时。
+description: 用于批量本地化当前工作区内所有 `SKILL.md` 的元数据与说明文档：将真实生效文件中的 `description` 翻译为中文，并在同目录创建或更新 `SKILL.zh-CN.md` 中文副本。适用于维护 skills 仓库、统一技能选择面板展示语言、保留英文原文同时提供中文版本等场景。
 ---
 
 # Translate Skill Descriptions
