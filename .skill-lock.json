@@ -1,0 +1,59 @@
+{
+  "version": 3,
+  "skills": {
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/agent-skills.git",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "skillFolderHash": "343db72180d05814949fef7d46be96b5c6ee86b3",
+      "installedAt": "2026-04-21T06:38:06.455Z",
+      "updatedAt": "2026-04-21T06:38:06.455Z"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/skills.git",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "skillFolderHash": "3013fdeb8a11b10b1eb795ec3ae8bfca38f7c26d",
+      "installedAt": "2026-04-21T06:38:13.712Z",
+      "updatedAt": "2026-04-21T06:38:13.712Z"
+    },
+    "electron": {
+      "source": "modelscope.cn",
+      "sourceType": "well-known",
+      "sourceUrl": "https://www.modelscope.cn/skills/@claude-dev-suite/electron/.well-known/skills/electron/SKILL.md",
+      "skillFolderHash": "",
+      "installedAt": "2026-04-22T06:49:46.817Z",
+      "updatedAt": "2026-04-22T06:49:46.817Z"
+    },
+    "karpathy-guidelines": {
+      "source": "forrestchang/andrej-karpathy-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/forrestchang/andrej-karpathy-skills.git",
+      "skillPath": "skills/karpathy-guidelines/SKILL.md",
+      "skillFolderHash": "e119339197d600aa39a24fd7a95c946800c9c949",
+      "pluginName": "andrej-karpathy-skills",
+      "installedAt": "2026-04-24T02:04:38.210Z",
+      "updatedAt": "2026-04-24T02:04:38.210Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "antigravity",
+    "cline",
+    "codex",
+    "cursor",
+    "deepagents",
+    "firebender",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-cli",
+    "opencode",
+    "warp",
+    "codebuddy"
+  ]
+}
