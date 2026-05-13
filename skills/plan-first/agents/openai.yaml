@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan First"
+  short_description: "Require a plan before acting on user instructions."
+  default_prompt: "Use $plan-first to make a plan before acting on every instruction."
