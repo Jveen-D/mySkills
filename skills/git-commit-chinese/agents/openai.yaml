@@ -1,0 +1,4 @@
+interface:
+  display_name: "中文 Git 提交"
+  short_description: "按不同提交场景生成规范中文 commit 信息与类型建议"
+  default_prompt: "Use $git-commit-chinese to create a Chinese Git commit message for staged or unstaged changes."
