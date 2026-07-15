@@ -1,0 +1,4 @@
+interface:
+  display_name: "Session Handoff"
+  short_description: "Write a continuation-ready HANDOFF.md before ending work"
+  default_prompt: "Use $write-session-handoff to capture the current task state in HANDOFF.md for a new session."
